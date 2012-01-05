@@ -1,0 +1,159 @@
+<!doctype html>
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+<head>
+	<title>Login | ObituariosCR</title>
+</head>
+<body class="login">
+	
+	<div class="nav">
+		<a data-url='/fragment/content1.html' href="#summary">FRAG 1</a>	
+		<a data-url='/fragment/content2.html' href="#items">FRAG 2</a>	
+		<a data-url='/fragment/content3.html' href="#spaces">FRAG 2 / 1</a>		
+	</div>
+
+	<div id="dynamic_content">
+		Home content
+		<div class="box">4 UNASSIGNED ITEMS</div>
+	</div>
+
+	<!-- JavaScript at the bottom for faster page loading -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+	<script src="jquery.ba-hashchange.min.js"></script>
+	<script src="../jquery.partial.js"></script>
+	<script src="../jquery.fragment.js"></script>
+
+<script>
+
+Synopsis
+
+Using fragment.js
+
+/*
+// Register default routes
+$.fragment({
+
+'': function (params) {
+// You in home, should match #/ , # or no hash like http://example.com/
+}
+
+':nav': function (params) {
+// Should match #spaces
+},
+
+':nav/:id': function (params) {
+// Should match #spaces/123456
+}
+
+':nav/:id?' function (params) {
+// Should match #spaces/ or #spaces/123456
+}
+
+':nav(summary|items)': function (params) {
+// Should match #summary or #items but not #spaces
+}
+
+':nav/:id(\\w{3})': function (params) {
+// Should match #spaces/123 but not #spaces/1234
+}
+})
+
+// params contains the matched hash route pair/value
+// Example bellow assuming that we have a hash like this #spaces/123
+':nav/:id(\\w{3})': function (params) {
+console.log(params.nav + ' and '+ params.id)
+// Output => spaces and 123
+}
+*/
+
+
+// LOAD REGISTER HASH ROUTES
+// If one of these routes are matched the callback function will
+// be executed, you can test my entering these routes manually
+$.fragment({
+
+	'': function () {
+		
+		if (!$('#hp_summary').length) {
+			$.partial('/fragment/content1.html');
+		}
+
+		$('.box').show();
+		console.log('THIS IS THE HOME PAGE');			
+	},
+
+	':nav/:id(\\d{2})':  function (params, obj) {
+    	console.log('FOUND THIS ROUTE: ', ':nav/:id(\\d{2})', params, obj);
+	},
+
+    ":nav/:id" : function (params, obj) {
+		console.log('FOUND THIS ROUTE: ', ':nav/:id', params, obj);
+    },
+
+	':nav(summary|items)': function (params, obj) {
+    	console.log('FOUND THIS ROUTE: ', ':nav(summary|items)', params, obj);
+	}
+});
+
+
+// REGISTER HASH ROUTES OON THE FLY
+// You can register routes on the fly at any 
+// given time, you can do so with $.fragment and by 
+// fallowing the example bellow
+// In the exmaple bellow we are registering :nav(summary|items|spaces) route whenever
+// one of the links are cliked, then whenever the hash is changed and matches the
+// the registered hash route, the callback function will be executed loading the partial
+// defined in the data-url attribute of the link (anchor).
+$('.nav a').bind('click', function () {
+	
+	var self = this;
+
+	// Match a list of options for example http://example.com#summary 
+	// or http://example.com#spaces but NOT http://example.com#home
+	$.fragment(':nav(summary|items|spaces)', function (params, obj) {
+		
+		console.log('a[href=#'+params.nav+']:first');
+
+		var $link = $('a[href=#'+params.nav+']:first');
+
+		console.log('************ data-url *************', $link.attr('data-url'));
+
+	    console.log('FROM LINK: ', ':nav/:id', params, obj);
+	});
+});
+
+
+
+// EXAMPLE OF HOW TO ADD REGULAR EXPRESSION
+// You can add rtegular expression to each route fragment\
+// in the example bellow we are saying that :nav could be anything
+// fallowed by an id containing only 2 alphanumeric characters
+// As an example http://example.com#spaces/20 would be a good match
+/*
+$.fragment(':nav/:id(\\w{2})', function (params, obj) {
+    console.log('FOUND THIS ROUTE: ', ':nav/summary', params, obj);
+
+    $.partial('http://localhost/fragment/content2.html', function () {
+    	console.log('PARTIAL WAS LOADED', ':nav/:id');
+    });
+})
+*/
+
+// EXAMPLE OF A SIMPLE ROUTE
+// :nav could be any alphanumeric string
+// Example: http://example.com/#summary
+/*
+$.fragment(':nav', function (params, obj) {
+    console.log('FOUND THIS ROUTE: ', ':nav/:id', params, obj);
+})
+.load('http://localhost/fragment/content1.html', function () {
+	console.log('PARTIAL WAS LOADED', ':nav/');
+});
+*/
+
+
+</script>
+</body>
+</html>
